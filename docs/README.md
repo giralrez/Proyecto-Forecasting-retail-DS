@@ -212,10 +212,12 @@ Como parte de la evolución del proyecto se contempla incorporar:
 
 ---
 
-## 👤 Autor
+## 👨‍💻 Autor
 
 **Andrés Giraldo Ramírez**
+
 Software Engineer en transición hacia Data Analytics / ML / Data Engineering
+
 GitHub: [@giralrez](https://github.com/giralrez)
 ---
 
