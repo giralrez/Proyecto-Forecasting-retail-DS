@@ -6,5 +6,6 @@ Proyecto base para un pipeline de machine learning con enfoque en forecasting de
 - data/raw: datos crudos
 - data/processed: datos limpios y listos para modelar
 - notebooks: experimentos y análisis exploratorio
-- models: artefactos entrenados
+- models: artefactos entrenados algoritmo familia xgboost
 - app/streamlit: aplicación de Streamlit
+- 
