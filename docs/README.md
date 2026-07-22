@@ -212,7 +212,7 @@ Como parte de la evolución del proyecto se contempla incorporar:
 
 ---
 
-👤 Autor
+# 👤 Autor
 
 Andrés Giraldo Ramírez (@giralrez) Software Engineer en transición hacia Data Analytics, ML y Data Engineering.
 ---
