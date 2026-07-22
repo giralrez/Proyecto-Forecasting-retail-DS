@@ -1,6 +1,6 @@
-# Forecasting Ventas
+# 🏆 Forecasting de Ventas para Retail de Artículos Deportivos
 
-Proyecto base para un pipeline de machine learning con enfoque en forecasting de ventas.
+> **Proyecto integral de Machine Learning para la predicción de ventas utilizando modelos de la familia XGBoost y una aplicación interactiva desarrollada con Streamlit.**
 
 ## Estructura
 - data/raw: datos crudos
