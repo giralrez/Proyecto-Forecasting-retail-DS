@@ -4,7 +4,7 @@
 ## instrucciones generales
 -  empieza siempre tu respuesta con el emoji 🤖
 -  responde siempre en español
-- 
+-  para cada instruccion genera un bloque nuevo de codigo y comentalo para llevar una trazabilidad del desarrollo del proyecto.
 
 ## Contexto del Proyecto
 
