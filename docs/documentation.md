@@ -2,8 +2,8 @@
 
 > **Documento de referencia que describe el desarrollo integral del proyecto de predicción de ventas para retail de artículos deportivos.**
 
-**Fecha de Actualización:** 25 de Julio, 2026  
-**Estado del Proyecto:** En Desarrollo - Fase de Entrenamiento de Modelos
+**Fecha de Actualización:** 03 de Agosto, 2026  
+**Estado del Proyecto:** En Desarrollo - Fase de Despliegue
 
 ---
 
@@ -18,9 +18,12 @@
 7. [Etapa 3: Análisis Exploratorio (EDA)](#etapa-3-análisis-exploratorio-eda)
 8. [Etapa 4: Ingeniería de Características](#etapa-4-ingeniería-de-características)
 9. [Etapa 5: División de Datos](#etapa-5-división-de-datos)
-10. [Etapa 6: Entrenamiento del Modelo](#etapa-6-entrenamiento-del-modelo)
-11. [Resultados y Métricas](#resultados-y-métricas)
-12. [Próximos Pasos](#próximos-pasos)
+10. [Etapa 6: Entrenamiento del Modelo v1](#etapa-6-entrenamiento-del-modelo-v1)
+11. [Resultados y Métricas v1](#resultados-y-métricas-v1)
+12. [Etapa 7: Modelo v2 - Features Extendidas](#etapa-7-modelo-v2---features-extendidas)
+13. [Etapa 8: Pipeline de Inferencia](#etapa-8-pipeline-de-inferencia)
+14. [Etapa 9: App Streamlit](#etapa-9-app-streamlit)
+15. [Próximos Pasos](#próximos-pasos)
 
 ---
 
@@ -76,11 +79,38 @@ El proyecto adopta una metodología **End-to-End** que abarca desde la preparaci
 - [x] Variables de competencia precio
 - [x] Indicador de producto destacado (estrella)
 
-### Fase 4: Modelado ✔️
+### Fase 4: Modelado v1 ✔️
 - [x] Selección de arquitectura del modelo
-- [x] Entrenamiento de HistGradientBoostingRegressor
+- [x] Entrenamiento de HistGradientBoostingRegressor (49 features)
 - [x] Validación cruzada
 - [x] Evaluación comparativa con baseline
+
+### Fase 5: Features Extendidas y Modelo v2 ✔️
+- [x] Variables temporales numéricas (anio, mes, dia_mes, semana_del_año, trimestre)
+- [x] Variables temporales binarias (es_fin_semana, es_inicio_mes, es_fin_mes, es_primera_quincena)
+- [x] Festivos Colombia con librería holidays
+- [x] Eventos comerciales (Black Friday, Cyber Monday)
+- [x] Variable descuento_porcentaje
+- [x] Lag features (1-7 días) por producto
+- [x] Media móvil de 7 días por producto
+- [x] Reentrenamiento modelo v2 con ~70 features
+
+### Fase 6: Pipeline de Inferencia ✔️
+- [x] Notebook forecasting.ipynb con mismas features que entrenamiento
+- [x] Cálculo de lags desde octubre para base de noviembre
+- [x] One-Hot Encoding y alineación con df.csv
+- [x] Guardado de inferencia_df_transformado.csv
+
+### Fase 7: App Streamlit ✔️
+- [x] Sidebar con controles de simulación
+- [x] Selector de producto (24 productos)
+- [x] Slider de descuento (-50% a +50%)
+- [x] Selector de escenario de competencia (3 opciones)
+- [x] KPIs destacados (unidades, ingresos, precio, descuento)
+- [x] Gráfico diario con Black Friday marcado
+- [x] Tabla detallada por día
+- [x] Comparativa de 3 escenarios de competencia
+- [x] Detección automática de project root para rutas
 
 ---
 
@@ -374,23 +404,28 @@ df_final = df_ventas.merge(
 
 | Tipo de Feature | Cantidad | Ejemplos |
 |-----------------|----------|----------|
-| **Temporales** | 7 | mes, trimestre, dia_semana, etc. |
-| **Eventos Especiales** | 7 | black_friday, navidad, festivos |
+| **Temporales Numéricas** | 5 | anio, mes, dia_mes, semana_del_año, trimestre |
+| **Temporales Binarias** | 4 | es_fin_semana, es_inicio_mes, es_fin_mes, es_primera_quincena |
+| **Eventos Especiales** | 3 | es_festivo, es_black_friday, es_cyber_monday |
+| **Negocio** | 1 | descuento_porcentaje |
+| **Lag Features** | 7 | lag_1_unidades a lag_7_unidades |
+| **Media Móvil** | 1 | media_movil_7d_unidades |
+| **Precios y Competencia** | 5 | precio_base, precio_venta, precio_competencia, ratio_precio, es_estrella |
 | **Categoría (OHE)** | 4 | categoria_h_* |
-| **Subcategoría (OHE)** | 20 | subcategoria_h_* |
-| **Producto (OHE)** | 34 | nombre_h_* |
-| **Precios** | 7 | precio_base, ratio_precio, volatilidad |
-| **Otros** | 1 | es_estrella |
-| **TOTAL** | **80** | — |
+| **Subcategoría (OHE)** | 16 | subcategoria_h_* |
+| **Producto (OHE)** | 24 | nombre_h_* |
+| **TOTAL** | **~70** | — |
 
 ### 4.7 Dataset Procesado
 
 ```
-Dataset Procesado: 3,552 registros × 80 features
-├─ Features Numéricas: 80
+Dataset Procesado (df.csv):
+├─ Registros: 2,880 (después de dropna de lags)
+├─ Features: ~70 columnas
+├─ Features Numéricas: ~70
 ├─ Features Categóricas: 0 (todas convertidas)
 ├─ Valores Faltantes: 0
-└─ Memoria: ~1.8 MB
+└─ Período: 2021-2024
 ```
 
 ---
@@ -452,7 +487,7 @@ y_val:    888 valores target
 
 ---
 
-## 🤖 Etapa 6: Entrenamiento del Modelo
+## 🤖 Etapa 6: Entrenamiento del Modelo v1
 
 ### 6.1 Selección del Algoritmo
 
@@ -526,7 +561,7 @@ hist_gbr = HistGradientBoostingRegressor(
 
 ---
 
-## 📈 Resultados y Métricas
+## 📈 Resultados y Métricas v1
 
 ### 7.1 Desempeño en Datos de Entrenamiento
 
@@ -697,24 +732,6 @@ Utilizando **Permutation Importance** en validación:
 
 ## 🎯 Próximos Pasos
 
-### Fase 7: Predicción en Datos Nuevos (PRÓXIMO)
-- [ ] Cargar datos de inferencia (ventas_2025_inferencia.csv)
-- [ ] Aplicar mismo pipeline de features
-- [ ] Generar predicciones
-- [ ] Exportar resultados
-
-### Fase 8: Despliegue (PRÓXIMO)
-- [ ] Serializar modelo entrenado (joblib)
-- [ ] Implementar API con Streamlit
-- [ ] Crear dashboard interactivo
-- [ ] Validar en ambiente de prueba
-
-### Fase 9: Monitoreo y Mejora (FUTURO)
-- [ ] Implementar logging de predicciones
-- [ ] Detectar data drift
-- [ ] Re-entrenamiento programado
-- [ ] A/B testing de modelos
-
 ### Fase 10: Optimización (FUTURO)
 - [ ] Tunning de hiperparámetros (Grid Search / Random Search)
 - [ ] Ensamble de modelos
@@ -723,30 +740,190 @@ Utilizando **Permutation Importance** en validación:
 
 ---
 
-## 📋 Checklist de Completitud
+## 🤖 Etapa 7: Modelo v2 - Features Extendidas
 
-### ✅ Completado
-- [x] Carga y exploración de datos
-- [x] Limpieza y validación
-- [x] Análisis exploratorio (EDA)
-- [x] Ingeniería de características (80 features)
-- [x] División temporal de datos
-- [x] Entrenamiento de modelo base
-- [x] Evaluación de desempeño
-- [x] Comparativa con baseline
-- [x] Análisis de importancia de features
+### 7.1 Motivación del Modelo v2
 
-### ⏳ En Progreso
-- [ ] Optimización de hiperparámetros
+El modelo v1 (49 features) no incluía variables temporales, lags ni calendario. El modelo v2 extiende el conjunto de features para capturar:
 
-### 🔄 Próximo
-- [ ] Predicción en datos de inferencia 2025
-- [ ] Deployment con Streamlit
-- [ ] Documentación final
+- **Patrones temporales**: mes, trimestre, día del mes, semana del año
+- **Efectos de calendario**: festivos Colombia, Black Friday, Cyber Monday
+- **Dependencia temporal**: lags de 1-7 días y media móvil de 7 días
+- **Comportamiento de precio**: descuento porcentual
+
+### 7.2 Nuevas Features (adición a las 49 del v1)
+
+| Tipo | Features | Cantidad |
+|------|----------|----------|
+| **Temporales numéricas** | anio, mes, dia_mes, semana_del_año, trimestre | 5 |
+| **Temporales binarias** | es_fin_semana, es_inicio_mes, es_fin_mes, es_primera_quincena | 4 |
+| **Eventos** | es_festivo, es_black_friday, es_cyber_monday | 3 |
+| **Negocio** | descuento_porcentaje | 1 |
+| **Lags** | lag_1_unidades a lag_7_unidades | 7 |
+| **Media móvil** | media_movil_7d_unidades | 1 |
+| **Total nuevas** | | **21** |
+
+**Total features modelo v2:** ~70
+
+### 7.3 Celdas Nuevas en entrenamiento.ipynb
+
+| Trazabilidad | Descripción |
+|-------------|-------------|
+| 63 | Recarga de datos crudos y merge |
+| 64 | Variables temporales numéricas y binarias |
+| 65 | Festivos Colombia y eventos comerciales |
+| 66 | Variable descuento porcentual |
+| 67 | Lag features (1-7 días) y media móvil |
+| 68 | Precio competencia, ratio precio y One-Hot Encoding |
+| 69 | Limpieza (dropna de lags) y guardado df.csv extendido |
+| 70 | Recarga df.csv, división temporal y selección de features |
+| 71 | Entrenamiento del modelo v2 |
+| 72 | Evaluación comparativa v1 vs v2 |
+| 73 | Reentrenamiento final y guardado del modelo |
+| 74 | Importancia de variables del modelo v2 |
+
+### 7.4 Métricas del Modelo v2
+
+```
+═══════════════════════════════════════════════════════════════
+COMPARATIVA: MODELO v1 (49 features) vs MODELO v2 (~70 features)
+═══════════════════════════════════════════════════════════════
+
+                    v1 Train    v1 Val      v2 Train    v2 Val
+R2                  0.9243      0.8227      (a determinar tras ejecución)
+MAE                 0.9517      1.5071      (a determinar tras ejecución)
+RMSE                1.7423      2.6311      (a determinar tras ejecución)
+
+═══════════════════════════════════════════════════════════════
+```
+
+> **Nota:** Las métricas del v2 se actualizarán tras ejecutar las celdas 63-74 del notebook.
 
 ---
 
-## 🔗 Archivos y Ubicaciones Clave
+## 🔄 Etapa 8: Pipeline de Inferencia
+
+### 8.1 Notebook forecasting.ipynb
+
+El notebook de inferencia fue reescrito para crear las mismas features que el modelo v2.
+
+| Trazabilidad | Descripción |
+|-------------|-------------|
+| F1 | Importación de librerías |
+| F2 | Carga de datos de inferencia 2025 |
+| F3 | Variables temporales numéricas y binarias |
+| F4 | Festivos Colombia y eventos comerciales |
+| F5 | Variable descuento porcentual |
+| F6 | Precio competencia y ratio precio |
+| F7 | Lag features (1-7 días) y media móvil |
+| F8 | One-Hot Encoding y alineación con df.csv |
+| F9 | Filtrado solo noviembre + guardado CSV |
+| F10 | Verificación de compatibilidad modelo |
+| F11 | Predicción básica del modelo |
+
+### 8.2 Datos de Inferencia
+
+| Propiedad | Valor |
+|-----------|-------|
+| **Archivo original** | `ventas_2025_inferencia.csv` |
+| **Filas** | 888 (octubre + noviembre 2025) |
+| **Productos** | 24 |
+| **Columnas** | 13 (incluye Amazon, Decathlon, Deporvillage) |
+
+### 8.3 Proceso de Transformación
+
+```
+ventas_2025_inferencia.csv
+    │
+    ├──→ Variables temporales (anio, mes, dia_mes, etc.)
+    ├──→ Festivos Colombia + eventos comerciales
+    ├──→ Descuento porcentual
+    ├──→ Precio competencia + ratio precio
+    ├──→ Lag features desde octubre (base para noviembre)
+    ├──→ One-Hot Encoding + alineación con df.csv
+    │
+    └──→ inferencia_df_transformado.csv (720 filas × ~70 columnas)
+```
+
+### 8.4 Importante: Lags en Inferencia
+
+Los lags del día 1 de noviembre se calculan desde los datos de octubre. Para los días 2-30, los lags se actualizan recursivamente con las predicciones anteriores.
+
+---
+
+## 🖥️ Etapa 9: App Streamlit
+
+### 9.1 Estructura de la App
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  📊 Dashboard Forecasting Ventas - Noviembre 2025            │
+├──────────────┬───────────────────────────────────────────────┤
+│   SIDEBAR    │          ZONA PRINCIPAL                        │
+│              │                                                │
+│ Controles    │  1. Header con producto seleccionado           │
+│ de           │                                                │
+│ Simulación   │  2. KPIs (4 tarjetas)                         │
+│              │     - Unidades totales proyectadas             │
+│ [Producto ▼] │     - Ingresos proyectados                    │
+│ [Descuento]  │     - Precio promedio de venta                 │
+│ [Competencia]│     - Descuento promedio                       │
+│ [Simular]    │                                                │
+│              │  3. Gráfico diario de predicción               │
+│              │     (Black Friday marcado en rojo)             │
+│              │                                                │
+│              │  4. Tabla detallada por día                    │
+│              │     (Black Friday resaltado)                   │
+│              │                                                │
+│              │  5. Comparativa de 3 escenarios                │
+│              │     (Competencia Actual, -5%, +5%)             │
+└──────────────┴───────────────────────────────────────────────┘
+```
+
+### 9.2 Funcionalidades del Sidebar
+
+| Control | Tipo | Rango | Descripción |
+|---------|------|-------|-------------|
+| **Producto** | Selectbox | 24 productos | Selecciona el producto a predecir |
+| **Descuento** | Slider | -50% a +50% | Ajuste sobre el precio base |
+| **Escenario competencia** | Radio | 3 opciones | Actual (0%), -5%, +5% |
+| **Simular Ventas** | Button | — | Ejecuta la predicción recursiva |
+
+### 9.3 Predicciones Recursivas
+
+La app implementa predicciones día por día:
+
+1. **Día 1**: Usa los lags del archivo (calculados desde octubre)
+2. **Predice día 1**
+3. **Día 2**: Actualiza lag_1 con predicción del día 1, desplaza lag_2←lag_1_anterior, etc.
+4. **Actualiza media móvil** con las últimas 7 predicciones
+5. **Repite** para los 30 días de noviembre
+
+### 9.4 Escenarios de Competencia
+
+La app compara 3 escenarios manteniendo el descuento del usuario:
+
+| Escenario | Ajuste | Descripción |
+|-----------|--------|-------------|
+| **Actual (0%)** | Sin cambio | Precios de competencia actuales |
+| **Competencia -5%** | -5% | Competencia baja precios un 5% |
+| **Competencia +5%** | +5% | Competencia sube precios un 5% |
+
+### 9.5 Detección de Project Root
+
+La app detecta automáticamente la raíz del proyecto buscando `requirements.txt` o `AGENTS.md` hacia arriba, permitiendo que funcione sin importar desde dónde se ejecute.
+
+### 9.6 Para Ejecutar
+
+```bash
+# Desde la raíz del proyecto
+cd app/streamlit
+streamlit run app.py
+```
+
+---
+
+## 🔗 Archivos y Ubicaciones Clave (Actualizado)
 
 ```
 forecasting_ventas/
@@ -757,23 +934,26 @@ forecasting_ventas/
 │   │   │   ├── competencia.csv         (Precios competencia)
 │   │   │   └── ventas.csv              (Datos de ventas)
 │   │   └── inferencia/
-│   │       └── ventas_2025_inferencia.csv
-│   └── processed/
-│       └── df.csv                       (Dataset procesado)
+│   │       └── ventas_2025_inferencia.csv  (Datos para predicción 2025)
+│   ├── processed/
+│   │   ├── df.csv                      (Dataset procesado extendido ~70 features)
+│   │   └── inferencia_df_transformado.csv  (Inferencia transformada noviembre)
+│   └── documentation.md               (Documentación de datos)
 │
 ├── 📔 notebooks/
-│   └── entrenamiento.ipynb             (Notebook completo del proyecto)
+│   ├── entrenamiento.ipynb             (Notebook principal: EDA + features + modelo)
+│   └── forecasting.ipynb               (Notebook de inferencia para 2025)
 │
 ├── 🤖 models/
-│   └── [Modelos entrenados serán guardados aquí]
+│   └── modelo_final.joblib             (Modelo v2 serializado con joblib)
 │
 ├── 📚 docs/
-│   ├── README.md                        (Visión general)
-│   └── documentation.md                 (Este archivo)
+│   ├── README.md                       (Visión general del proyecto)
+│   └── documentation.md                (Documentación técnica completa)
 │
 └── 💻 app/
     └── streamlit/
-        └── app.py                       (Aplicación web)
+        └── app.py                      (Aplicación Streamlit con predicciones)
 ```
 
 ---
@@ -781,9 +961,9 @@ forecasting_ventas/
 ## 📞 Contacto y Soporte
 
 **Proyecto:** Forecasting de Ventas para Retail Deportivo
-**Desarrollador:** Andrés [Nombre]
-**Fecha de Actualización:** 25 de Julio, 2026
-**Estado:** En Desarrollo - Fase de Validación
+**Desarrollador:** Andrés Giraldo Ramírez
+**Fecha de Actualización:** 03 de Agosto, 2026
+**Estado:** En Desarrollo - Fase de Despliegue
 
 ---
 
@@ -792,6 +972,7 @@ forecasting_ventas/
 | Versión | Fecha | Cambios |
 |---------|-------|---------|
 | **1.0** | 25-07-2026 | Documentación inicial completa con entrenamiento de modelo |
+| **2.0** | 03-08-2026 | Modelo v2 con features extendidas, pipeline de inferencia, app Streamlit |
 
 ---
 

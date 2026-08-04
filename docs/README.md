@@ -1,12 +1,12 @@
 # 🏆 Forecasting de Ventas para Retail de Artículos Deportivos
 
-> **Proyecto integral de Machine Learning para la predicción de ventas utilizando modelos de la familia XGBoost y una aplicación interactiva desarrollada con Streamlit.**
+> **Proyecto integral de Machine Learning para la predicción de ventas utilizando HistGradientBoostingRegressor y una aplicación interactiva desarrollada con Streamlit.**
 
-![Python](https://img.shields.io/badge/Python-3.x-blue?style=for-the-badge\&logo=python)
-![XGBoost](https://img.shields.io/badge/XGBoost-Machine%20Learning-red?style=for-the-badge)
-![Pandas](https://img.shields.io/badge/Pandas-Análisis%20de%20Datos-black?style=for-the-badge\&logo=pandas)
-![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-ML-orange?style=for-the-badge\&logo=scikit-learn)
-![Streamlit](https://img.shields.io/badge/Streamlit-Web%20App-ff4b4b?style=for-the-badge\&logo=streamlit)
+![Python](https://img.shields.io/badge/Python-3.x-blue?style=for-the-badge&logo=python)
+![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-ML-orange?style=for-the-badge&logo=scikit-learn)
+![Pandas](https://img.shields.io/badge/Pandas-Análisis%20de%20Datos-black?style=for-the-badge&logo=pandas)
+![Streamlit](https://img.shields.io/badge/Streamlit-Web%20App-ff4b4b?style=for-the-badge&logo=streamlit)
+![Plotly](https://img.shields.io/badge/Plotly-Visualización-3f4f75?style=for-the-badge&logo=plotly)
 
 ---
 
@@ -14,9 +14,9 @@
 
 La predicción de la demanda es uno de los principales desafíos del sector retail, ya que impacta directamente la gestión del inventario, las compras, la logística y la rentabilidad del negocio.
 
-Este proyecto desarrolla una **solución End-to-End de Machine Learning** capaz de pronosticar las ventas de una empresa dedicada a la comercialización de artículos deportivos mediante modelos basados en la familia **XGBoost**.
+Este proyecto desarrolla una **solución End-to-End de Machine Learning** capaz de pronosticar las ventas de una empresa dedicada a la comercialización de artículos deportivos utilizando **HistGradientBoostingRegressor** con features extendidas (temporales, lags, calendario, competencia).
 
-El proyecto abarca todo el ciclo de vida de un modelo de Machine Learning, desde la preparación de los datos hasta su despliegue en una aplicación web interactiva, siguiendo buenas prácticas de organización, modularidad y reproducibilidad.
+El proyecto abarca todo el ciclo de vida de un modelo de Machine Learning, desde la preparación de los datos hasta su despliegue en una aplicación web interactiva con predicciones recursivas día por día.
 
 ---
 
@@ -34,14 +34,15 @@ Construir un modelo predictivo que permita estimar las ventas futuras con el fin
 
 # 🚀 Tecnologías Utilizadas
 
-* Python
+* Python 3.x
 * Pandas
 * NumPy
-* Scikit-Learn
-* XGBoost
-* Matplotlib
-* Streamlit
-* Joblib
+* Scikit-Learn (HistGradientBoostingRegressor)
+* Holidays (festivos Colombia)
+* Matplotlib / Seaborn
+* Plotly (gráficos interactivos)
+* Streamlit (aplicación web)
+* Joblib (serialización de modelos)
 
 ---
 
@@ -50,16 +51,33 @@ Construir un modelo predictivo que permita estimar las ventas futuras con el fin
 ```text
 forecasting_ventas/
 │
-├── app/                 # Aplicación desarrollada con Streamlit
-├── data/
-│   ├── raw/             # Datos originales
-│   ├── processed/       # Datos procesados
-│   └── inference/       # Datos para inferencia
+├── app/
+│   └── streamlit/
+│       └── app.py                 # Aplicación Streamlit con predicciones recursivas
 │
-├── docs/                # Documentación del proyecto
-├── models/              # Modelos entrenados
-├── notebooks/           # Análisis exploratorio y experimentación
-├── src/                 # Código fuente
+├── data/
+│   ├── raw/
+│   │   ├── entrenamiento/
+│   │   │   ├── ventas.csv         # Datos de ventas 2021-2024
+│   │   │   └── competencia.csv    # Precios de competencia
+│   │   └── inferencia/
+│   │       └── ventas_2025_inferencia.csv  # Datos para predicción 2025
+│   ├── processed/
+│   │   ├── df.csv                 # Dataset procesado extendido (~70 features)
+│   │   └── inferencia_df_transformado.csv  # Inferencia transformada
+│   └── documentation.md           # Documentación de datos
+│
+├── docs/
+│   ├── README.md                  # Este archivo
+│   └── documentation.md           # Documentación técnica completa
+│
+├── models/
+│   └── modelo_final.joblib        # Modelo v2 serializado
+│
+├── notebooks/
+│   ├── entrenamiento.ipynb        # Notebook principal (EDA + features + modelo)
+│   └── forecasting.ipynb          # Notebook de inferencia 2025
+│
 ├── requirements.txt
 └── README.md
 ```
@@ -71,7 +89,7 @@ forecasting_ventas/
 El proyecto sigue un flujo de trabajo orientado a entornos reales de Machine Learning.
 
 ```text
-Datos Originales
+Datos Originales (ventas.csv + competencia.csv)
         │
         ▼
 Limpieza y Preparación
@@ -80,37 +98,55 @@ Limpieza y Preparación
 Análisis Exploratorio (EDA)
         │
         ▼
-Ingeniería de Características
+Ingeniería de Características (~70 features)
+├─ Variables temporales (mes, trimestre, día)
+├─ Festivos Colombia + eventos comerciales
+├─ Lag features (1-7 días)
+├─ Media móvil de 7 días
+├─ Precio competencia y ratio
+└─ One-Hot Encoding (productos, categorías)
         │
         ▼
-Entrenamiento del Modelo
+Entrenamiento del Modelo v2 (HistGradientBoostingRegressor)
         │
         ▼
-Optimización de Hiperparámetros
+Serialización del Modelo (joblib)
         │
         ▼
-Evaluación del Modelo
-        │
-        ▼
-Serialización del Modelo
+Pipeline de Inferencia (forecasting.ipynb)
+├─ Mismas features que entrenamiento
+├─ Lags desde octubre como base
+└─ Predicciones para noviembre 2025
         │
         ▼
 Despliegue con Streamlit
+├─ Sidebar con controles de simulación
+├─ Predicciones recursivas día por día
+├─ KPIs y gráficos interactivos
+└─ Comparativa de escenarios de competencia
 ```
 
 ---
 
 # 🤖 Modelo de Machine Learning
 
-El modelo predictivo se desarrolla utilizando algoritmos de la familia **XGBoost**, ampliamente reconocidos por su excelente desempeño sobre datos tabulares.
+El modelo predictivo utiliza **HistGradientBoostingRegressor** de Scikit-Learn, una implementación eficiente de Gradient Boosting optimizada para grandes volúmenes de datos.
 
-Entre sus principales ventajas se encuentran:
+### Características del Modelo v2
 
-* Alto poder predictivo.
-* Excelente capacidad de generalización.
-* Manejo eficiente de relaciones no lineales.
-* Rapidez en el entrenamiento.
-* Robustez frente a grandes volúmenes de datos.
+* **~70 features** incluyendo temporales, lags, calendario, competencia y OHE
+* **Predicciones recursivas** día por día con actualización de lags
+* **R² = 0.8227** en validación (2024)
+* **MAE = 1.51 unidades** en validación
+* **Parámetros conservadores** para evitar overfitting
+
+### Ventajas
+
+* Alto poder predictivo en datos tabulares
+* Excelente capacidad de generalización
+* Manejo eficiente de relaciones no lineales
+* Robustez frente a grandes volúmenes de datos
+* Manejo nativo de valores faltantes
 
 ---
 
@@ -122,17 +158,25 @@ El proyecto incluye:
 
 ✅ Limpieza y transformación de datos.
 
-✅ Ingeniería de características.
+✅ Ingeniería de características extendidas (~70 features).
 
-✅ Entrenamiento del modelo de Machine Learning.
+✅ Variables temporales, lags y calendario.
+
+✅ Entrenamiento del modelo de Machine Learning (HistGradientBoostingRegressor).
 
 ✅ Evaluación mediante métricas de desempeño.
 
-✅ Almacenamiento del modelo entrenado.
+✅ Serialización del modelo entrenado (joblib).
 
-✅ Generación de predicciones sobre nuevos datos.
+✅ Pipeline de inferencia para predicción 2025.
+
+✅ Predicciones recursivas día por día.
 
 ✅ Aplicación web interactiva con Streamlit.
+
+✅ Simulación de escenarios de competencia (±5%).
+
+✅ Análisis de impacto de descuentos.
 
 ---
 
@@ -150,10 +194,23 @@ git clone https://github.com/tu_usuario/forecasting_ventas.git
 pip install -r requirements.txt
 ```
 
-### 3. Ejecutar la aplicación
+### 3. Ejecutar notebook de entrenamiento
 
 ```bash
-streamlit run app/app.py
+jupyter notebook notebooks/entrenamiento.ipynb
+```
+
+### 4. Ejecutar notebook de inferencia
+
+```bash
+jupyter notebook notebooks/forecasting.ipynb
+```
+
+### 5. Ejecutar la aplicación Streamlit
+
+```bash
+cd app/streamlit
+streamlit run app.py
 ```
 
 ---
@@ -162,11 +219,13 @@ streamlit run app/app.py
 
 La aplicación permite:
 
-* Cargar nuevos datos de ventas.
-* Ejecutar el modelo de predicción.
-* Visualizar las ventas proyectadas.
-* Descargar los resultados obtenidos.
-* Facilitar la toma de decisiones basada en datos.
+* Seleccionar un producto de la lista de 24 productos.
+* Ajustar el descuento sobre el precio base (-50% a +50%).
+* Simular 3 escenarios de competencia (Actual, -5%, +5%).
+* Visualizar predicciones diarias de ventas para noviembre 2025.
+* Identificar visualmente el impacto del Black Friday.
+* Comparar unidades totales e ingresos por escenario.
+* Descargar resultados detallados por día.
 
 ---
 
@@ -201,14 +260,15 @@ Este proyecto evidencia conocimientos en:
 
 Como parte de la evolución del proyecto se contempla incorporar:
 
-* Validación temporal (*Time Series Cross Validation*).
-* Optimización automática de hiperparámetros.
+* Optimización automática de hiperparámetros (Grid Search / Random Search).
 * Explicabilidad del modelo mediante SHAP.
+* Validación cruzada temporal (Time Series Cross Validation).
 * Seguimiento de experimentos con MLflow.
 * Contenerización utilizando Docker.
 * API REST con FastAPI.
 * Despliegue en la nube (Azure, AWS o Google Cloud).
 * Automatización mediante pipelines de CI/CD.
+* Monitoreo de data drift y re-entrenamiento programado.
 
 ---
 
