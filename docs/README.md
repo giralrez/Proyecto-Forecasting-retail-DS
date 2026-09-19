@@ -2,6 +2,8 @@
 
 > **Proyecto integral de Machine Learning para la predicción de ventas utilizando HistGradientBoostingRegressor y una aplicación interactiva desarrollada con Streamlit.**
 
+[![Ver App en Vivo](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://proyecto-forecasting-retail-ds-kd3bbqjeusfujnseyndqng.streamlit.app/)
+
 ![Python](https://img.shields.io/badge/Python-3.x-blue?style=for-the-badge&logo=python)
 ![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-ML-orange?style=for-the-badge&logo=scikit-learn)
 ![Pandas](https://img.shields.io/badge/Pandas-Análisis%20de%20Datos-black?style=for-the-badge&logo=pandas)
